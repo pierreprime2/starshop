@@ -1,0 +1,3 @@
+symfonycasts_tailwind:
+  binary: './node_modules/.bin/tailwindcss'
+  input_css: 'assets/styles/app.css'

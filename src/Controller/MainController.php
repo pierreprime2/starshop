@@ -2,22 +2,23 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\StarshipRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Entity\Starship;
+use Symfony\Component\HttpFoundation\Request;
 
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_homepage')]
-    public function homepage(StarshipRepository $starshipRepository): Response
+    public function homepage(StarshipRepository $repository, Request $request): Response
     {
-        // dd($this->getParameter('iss_location_cache_ttl'));
-
-        $ships = $starshipRepository->findAll();
-        $myShip = $ships[array_rand($ships)];
+        $ships = $repository->findIncomplete();
+        $ships->setMaxPerPage(5);
+        $ships->setCurrentPage($request->query->get('page', 1));
+        $myShip = $repository->findMyShip();
 
         return $this->render('main/homepage.html.twig', [
             'ships' => $ships,

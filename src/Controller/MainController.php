@@ -6,17 +6,22 @@ use App\Repository\StarshipRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_homepage')]
     public function homepage(StarshipRepository $starshipRepository): Response
     {
+        // dd($this->getParameter('iss_location_cache_ttl'));
+
         $ships = $starshipRepository->findAll();
         $myShip = $ships[array_rand($ships)];
+
         return $this->render('main/homepage.html.twig', [
             'ships' => $ships,
-            'myShip' => $myShip,
+            'myShip' => $myShip
         ]);
     }
 }
